@@ -659,15 +659,28 @@ img {
 }
 
 
-#creditsBtn {             /* 🎬 Roll Credits button */
-    margin-top: 20px;
-    padding: 10px 20px;
-    border-radius: 20px;
+#creditsBtn {
+    margin-top: 30px;
+    padding: 18px 40px;        /* bigger size */
+    font-size: 18px;           /* bigger text */
+    font-weight: 600;
+
+    border-radius: 30px;
     border: none;
-    background: rgba(255,255,255,0.1);
+
+    background: linear-gradient(135deg, #6a5cff, #00d4ff);
     color: white;
+
     cursor: pointer;
-    transition: 0.3s;
+
+    transition: all 0.3s ease;
+
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+#creditsBtn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.7);
 }
 
 #creditsBtn:hover {
@@ -679,10 +692,21 @@ img {
     position: fixed;
     inset: 0;
     background: black;
-    display: none;
+
+    display: flex;
     justify-content: center;
     align-items: center;
+
     z-index: 20000;
+
+    opacity: 0;                  /* 🔥 start invisible */
+    transition: opacity 0.8s ease;  /* 🔥 smooth fade */
+    pointer-events: none;        /* prevent clicks when hidden */
+}
+
+#credits-video-overlay.active {
+    opacity: 1;
+    pointer-events: all;
 }
 
 #credits-video {
@@ -1515,7 +1539,7 @@ function handleAbidClick(name) {
     lastPopupWasProxy = true; // 🔥 set this when showing proxy popup
     showPopup(
 `ATTENDANCE PROXY SUCCESSFUL.
-• JAHNAVI • ROJAMANI • KESHAVANANDA • MEGHANA • S.JYOSHNA • SONIYA • MALLESH • NARASIMHA • PRUDHVINATH • HRUTHIKESHWAR • MUSTAFA BOKHARI • T.MAHESH BABU • SALMAN
+• JAHNAVI • ROJAMANI • KESHAVANANDA • MEGHANA • S.JYOSHNA • SONIYA • MALLESH • NARASIMHA • PRUDHVINATH • HRUTHIKESHWAR • MUSTAFA BOKHARI • VENKATA SRAVAN • T.MAHESH BABU • SALMAN
 
 Proxy applied for all classes. No more attendance worries! 🎉`,
 "Attendance secured 😎"
@@ -1713,20 +1737,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
     creditsBtn.onclick = () => {
 
-        const bg = document.getElementById("bg-music");
-        if (bg) bg.pause();
+    const bg = document.getElementById("bg-music");
+    if (bg) bg.pause();
 
-        creditsOverlay.style.display = "flex";
+    creditsOverlay.style.display = "flex";
 
+    // 🔥 trigger fade
+    setTimeout(() => {
+        creditsOverlay.classList.add("active");
+    }, 10);
+
+    // 🎬 delay video start until fade completes
+    setTimeout(() => {
         creditsVideo.currentTime = 0;
         creditsVideo.play().catch(() => {});
-    };
+    }, 800); // match CSS transition time
+};
 
     creditsOverlay.addEventListener("click", () => {
-        creditsVideo.pause();
-        creditsVideo.currentTime = 0;
+
+    creditsVideo.pause();
+    creditsVideo.currentTime = 0;
+
+    // 🔥 fade out
+    creditsOverlay.classList.remove("active");
+
+    setTimeout(() => {
         creditsOverlay.style.display = "none";
-    });
+    }, 800);
+});
 
 
 
@@ -1734,7 +1773,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // 🔥 AUTO CLOSE WHEN VIDEO ENDS
 creditsVideo.addEventListener("ended", () => {
-    creditsOverlay.style.display = "none";
+    creditsOverlay.classList.remove("active");
+
+    setTimeout(() => {
+        creditsOverlay.style.display = "none";
+    }, 800);
 });
 </script>
 <div id="center-popup">
@@ -1776,7 +1819,7 @@ but the memories don’t.</p>
 
     <p class="footer-credit">Crafted quietly by Abid</p>
     <p class="footer-music">Music: not ours, but felt. 🎧</p>
-<button id="creditsBtn">🎬 Roll Credits</button>
+<button id="creditsBtn">🎬 Play Final Credits</button>
 </footer>
 
 </body>
